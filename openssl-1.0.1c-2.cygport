@@ -1,0 +1,45 @@
+CATEGORY="Net"
+SUMMARY="A general purpose cryptography toolkit with TLS implementation"
+DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
+machines. OpenSSL includes a certificate management tool and shared
+libraries which provide various cryptographic algorithms and protocols."
+HOMEPAGE="http://www.openssl.org/"
+SRC_URI="ftp://ftp.openssl.org/source/${P}.tar.gz"
+PATCH_URI="http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-1.0.0-beta5-enginesdir.patch"
+
+PKG_NAMES="openssl openssl-devel libopenssl100"
+openssl_CONTENTS="etc usr/bin/openssl.exe usr/bin/c_rehash
+		  usr/share/doc usr/ssl/certs usr/ssl/man/man[157] usr/ssl/misc
+		  usr/ssl/openssl.cnf usr/ssl/private"
+openssl_devel_SUMMARY="${SUMMARY} (development)"
+openssl_devel_CONTENTS="usr/include usr/lib/*.a usr/lib/pkgconfig usr/ssl/man/man3"
+libopenssl100_SUMMARY="${SUMMARY} (runtime)"
+libopenssl100_CONTENTS="usr/bin/cyg*-1.0.0.dll usr/lib/${P%[a-z]}/engines/"
+
+MAKEOPTS+=" -j1"
+
+src_compile() {
+	cd ${S}
+	lndirs
+	cd ${B}
+	./config --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
+		shared zlib no-idea no-rc5
+	cygmake depend
+	cygmake
+}
+
+src_install() {
+	cd ${B}
+	cygmake install INSTALL_PREFIX=${D}
+
+	dodir /usr/lib/${P%[a-z]}
+	mv ${D}/usr/lib/engines ${D}/usr/lib/${P%[a-z]}/
+
+	dodir /usr/ssl/certs
+	cp -rp ${S}/certs/* ${D}/usr/ssl/certs/
+
+	doenv MANPATH "\${MANPATH}:/usr/ssl/man"
+}
+
+DOCS="CHANGES.SSLeay INSTALL"
+KEEPDIRS="/usr/ssl/private"
