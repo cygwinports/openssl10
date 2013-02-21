@@ -1,3 +1,6 @@
+NAME="openssl"
+VERSION=1.0.1e
+RELEASE=1
 CATEGORY="Net"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
 DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
@@ -5,16 +8,19 @@ machines. OpenSSL includes a certificate management tool and shared
 libraries which provide various cryptographic algorithms and protocols."
 HOMEPAGE="http://www.openssl.org/"
 SRC_URI="ftp://ftp.openssl.org/source/${P}.tar.gz"
-PATCH_URI="http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-0.9.8m-enginesdir.patch?h=f11"
+PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-1.0.0-beta5-enginesdir.patch
+	1.0.1-cygwin64.patch
+"
 
-PKG_NAMES="openssl openssl-devel libopenssl098"
+PKG_NAMES="openssl openssl-devel libopenssl100"
 openssl_CONTENTS="etc usr/bin/openssl.exe usr/bin/c_rehash
 		  usr/share/doc usr/ssl/certs usr/ssl/man/man[157] usr/ssl/misc
 		  usr/ssl/openssl.cnf usr/ssl/private"
 openssl_devel_SUMMARY="${SUMMARY} (development)"
 openssl_devel_CONTENTS="usr/include usr/lib/*.a usr/lib/pkgconfig usr/ssl/man/man3"
-libopenssl098_SUMMARY="${SUMMARY} (runtime)"
-libopenssl098_CONTENTS="usr/bin/cyg*-0.9.8.dll usr/lib/${P%[a-z]}/engines/"
+libopenssl100_SUMMARY="${SUMMARY} (runtime)"
+libopenssl100_CONTENTS="usr/bin/cyg*-1.0.0.dll usr/lib/${P%[a-z]}/engines/"
 
 MAKEOPTS+=" -j1"
 
@@ -22,8 +28,10 @@ src_compile() {
 	cd ${S}
 	lndirs
 	cd ${B}
-	./config --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
-		shared zlib no-idea no-rc5
+	unset CC
+	./Configure --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
+		$(cross_compiling && echo -n --cross-compile-prefix=${ARCH}-pc-cygwin-) \
+		shared zlib no-idea no-rc5 Cygwin${ARCH_x86_64:+-x86_64}
 	cygmake depend
 	cygmake
 }
