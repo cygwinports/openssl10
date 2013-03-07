@@ -31,7 +31,7 @@ src_compile() {
 	unset CC
 	./Configure --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
 		$(cross_compiling && echo -n --cross-compile-prefix=${ARCH}-pc-cygwin-) \
-		shared zlib no-idea no-rc5 Cygwin${ARCH_x86_64:+-x86_64}
+		shared zlib no-idea no-rc5 no-asm Cygwin${ARCH_x86_64+-x86_64}
 	cygmake depend
 	cygmake
 }
