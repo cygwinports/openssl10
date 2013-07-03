@@ -8,6 +8,15 @@
  
  # NetWare from David Ward (dsward@novell.com)
  # requires either MetroWerks NLM development tools, or gcc / nlmconv
+@@ -1127,7 +1128,7 @@ foreach (sort @experimental)
+ 
+ my $IsMK1MF=scalar grep /^$target$/,@MK1MF_Builds;
+ 
+-$exe_ext=".exe" if ($target eq "Cygwin" || $target eq "DJGPP" || $target =~ /^mingw/);
++$exe_ext=".exe" if ($target =~ /^Cygwin/ || $target eq "DJGPP" || $target =~ /^mingw/);
+ $exe_ext=".nlm" if ($target =~ /netware/);
+ $exe_ext=".pm"  if ($target =~ /vos/);
+ $openssldir="/usr/local/ssl" if ($openssldir eq "" and $prefix eq "");
 --- origsrc/openssl-1.0.1e/Makefile.org	2013-02-11 09:26:04.000000000 -0600
 +++ src/openssl-1.0.1e/Makefile.org	2013-02-17 16:38:08.000000000 -0600
 @@ -325,9 +325,9 @@ clean-shared:
