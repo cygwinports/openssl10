@@ -1,6 +1,6 @@
 NAME="openssl"
 VERSION=1.0.1g
-RELEASE=1
+RELEASE=2
 CATEGORY="Net"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
 DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
@@ -30,6 +30,7 @@ src_compile() {
 	cd ${B}
 	unset CC
 	./Configure --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
+		--with-krb5-dir=/usr --with-krb5-flavor=MIT \
 		$(cross_compiling && echo -n --cross-compile-prefix=${ARCH}-pc-cygwin-) \
 		shared zlib no-idea no-rc5 no-asm Cygwin${ARCH_x86_64+-x86_64}
 	cygmake depend
