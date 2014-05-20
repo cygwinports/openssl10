@@ -14,7 +14,7 @@ PATCH_URI="
 "
 
 PKG_NAMES="openssl openssl-devel libopenssl100"
-openssl_CONTENTS="etc usr/bin/openssl.exe usr/bin/c_rehash
+openssl_CONTENTS="usr/bin/openssl.exe usr/bin/c_rehash
 		  usr/share/doc usr/ssl/certs usr/ssl/man/man[157] usr/ssl/misc
 		  usr/ssl/openssl.cnf usr/ssl/private"
 openssl_devel_SUMMARY="${SUMMARY} (development)"
@@ -46,8 +46,6 @@ src_install() {
 
 	dodir /usr/ssl/certs
 	cp -rp ${S}/certs/* ${D}/usr/ssl/certs/
-
-	doenv MANPATH "\${MANPATH}:/usr/ssl/man"
 }
 
 DOCS="CHANGES.SSLeay INSTALL"
