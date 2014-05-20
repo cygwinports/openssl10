@@ -20,6 +20,7 @@ openssl_CONTENTS="usr/bin/openssl.exe usr/bin/c_rehash
 openssl_devel_SUMMARY="${SUMMARY} (development)"
 openssl_devel_CONTENTS="usr/include usr/lib/*.a usr/lib/pkgconfig usr/ssl/man/man3"
 libopenssl100_SUMMARY="${SUMMARY} (runtime)"
+libopenssl100_REQUIRES="ca-certificates"
 libopenssl100_CONTENTS="usr/bin/cyg*-1.0.0.dll usr/lib/${P%[a-z]}/engines/"
 
 MAKEOPTS+=" -j1"
