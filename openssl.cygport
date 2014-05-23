@@ -32,11 +32,12 @@ src_compile() {
 	lndirs
 	cd ${B}
 	unset CC
+	# MASS REBUILD (ABI break): remove no-krb5 and add:
+	#	--with-krb5-dir=/usr --with-krb5-flavor=MIT \
 	./Configure --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
-		--with-krb5-dir=/usr --with-krb5-flavor=MIT \
 		$(cross_compiling && echo -n --cross-compile-prefix=${ARCH}-pc-cygwin-) \
 		shared zlib enable-camellia enable-seed enable-tlsext \
-		enable-rfc3779 enable-cms enable-md2 no-idea no-rc5 \
+		enable-rfc3779 enable-cms enable-md2 no-idea no-rc5 no-krb5 \
 		Cygwin${ARCH_x86_64+-x86_64}
 	cygmake depend
 	cygmake
