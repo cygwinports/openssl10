@@ -15,10 +15,9 @@ PATCH_URI="
 
 PKG_NAMES="openssl openssl-devel libopenssl100"
 openssl_CONTENTS="usr/bin/openssl.exe usr/bin/c_rehash
-		  usr/share/doc usr/ssl/certs usr/ssl/man/man[157] usr/ssl/misc
-		  usr/ssl/openssl.cnf usr/ssl/private"
+		  usr/share/doc usr/share/man/man[157] usr/ssl/"
 openssl_devel_SUMMARY="${SUMMARY} (development)"
-openssl_devel_CONTENTS="usr/include usr/lib/*.a usr/lib/pkgconfig usr/ssl/man/man3"
+openssl_devel_CONTENTS="usr/include usr/lib/*.a usr/lib/pkgconfig usr/share/man/man3/"
 libopenssl100_SUMMARY="${SUMMARY} (runtime)"
 libopenssl100_REQUIRES="ca-certificates"
 libopenssl100_CONTENTS="usr/bin/cyg*-1.0.0.dll usr/lib/${P%[a-z]}/engines/"
@@ -49,6 +48,10 @@ src_install() {
 
 	dodir /usr/lib/${P%[a-z]}
 	mv ${D}/usr/lib/engines ${D}/usr/lib/${P%[a-z]}/
+
+	dodir /usr/share
+	# move these so that we do not have to mess with MANPATH
+	mv ${D}/usr/ssl/man ${D}/usr/share/
 
 	dodir /usr/ssl/certs
 	cp -rp ${S}/certs/* ${D}/usr/ssl/certs/
