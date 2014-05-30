@@ -1,6 +1,6 @@
 NAME="openssl"
 VERSION=1.0.1g
-RELEASE=2
+RELEASE=3
 CATEGORY="Net"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
 DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
@@ -11,6 +11,7 @@ SRC_URI="ftp://ftp.openssl.org/source/${P}.tar.gz"
 PATCH_URI="
 	http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-1.0.0-beta5-enginesdir.patch
 	1.0.1-cygwin64.patch
+	1.0.1-debuginfo.patch
 "
 
 PKG_NAMES="openssl openssl-devel libopenssl100"
