@@ -1,6 +1,6 @@
 NAME="openssl"
 VERSION=1.0.1j
-RELEASE=1
+RELEASE=2
 CATEGORY="Net"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
 DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
