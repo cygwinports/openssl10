@@ -1,6 +1,6 @@
 NAME="openssl"
 VERSION=1.0.2g
-RELEASE=1
+RELEASE=2
 CATEGORY="Net"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
 DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
@@ -42,7 +42,8 @@ src_compile() {
 	./Configure --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
 		$(cross_compiling && echo -n --cross-compile-prefix=${ARCH}-pc-cygwin-) \
 		shared zlib enable-camellia enable-seed enable-tlsext \
-		enable-rfc3779 enable-cms enable-md2 no-idea no-rc5 no-krb5 \
+		enable-rfc3779 enable-cms enable-md2 enable-ssl2 \
+		no-idea no-rc5 no-krb5 \
 		Cygwin${ARCH_x86_64+-x86_64}
 	cygmake depend
 	cygmake OPT_CFLAGS="${CFLAGS}"
