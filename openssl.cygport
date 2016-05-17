@@ -9,7 +9,7 @@ libraries which provide various cryptographic algorithms and protocols."
 HOMEPAGE="http://www.openssl.org/"
 SRC_URI="ftp://ftp.openssl.org/source/${P}.tar.gz"
 PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-1.0.0-beta5-enginesdir.patch
+	http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-1.0.2a-enginesdir.patch
 	1.0.2-debuginfo.patch
 "
 
