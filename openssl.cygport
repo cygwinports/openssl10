@@ -7,7 +7,7 @@ DESCRIPTION="The OpenSSL toolkit provides support for secure communications betw
 machines. OpenSSL includes a certificate management tool and shared
 libraries which provide various cryptographic algorithms and protocols."
 HOMEPAGE="http://www.openssl.org/"
-SRC_URI="ftp://ftp.openssl.org/source/${P}.tar.gz"
+SRC_URI="https://www.openssl.org/source/openssl-${VERSION}.tar.gz"
 PATCH_URI="
 	http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-1.0.2a-enginesdir.patch
 	1.0.2-debuginfo.patch
