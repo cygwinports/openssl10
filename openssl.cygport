@@ -1,5 +1,5 @@
 NAME="openssl"
-VERSION=1.0.2i
+VERSION=1.0.2j
 RELEASE=1
 CATEGORY="Net"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
