@@ -1,32 +1,57 @@
-NAME="openssl"
-VERSION=1.0.2n
+NAME="openssl10"
+VERSION=1.0.2q
 RELEASE=1
-CATEGORY="Net"
+CATEGORY="Libs"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
 DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
 machines. OpenSSL includes a certificate management tool and shared
 libraries which provide various cryptographic algorithms and protocols."
 HOMEPAGE="http://www.openssl.org/"
 SRC_URI="https://www.openssl.org/source/openssl-${VERSION}.tar.gz"
+SRC_DIR="openssl-${VERSION}"
 PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/openssl.git/plain/openssl-1.0.2i-enginesdir.patch
+	fedora/openssl-1.0.2a-defaults.patch
+	fedora/openssl-1.0.2i-enginesdir.patch
+	fedora/openssl-1.0.2o-test-use-localhost.patch
+	fedora/openssl-1.0.1c-perlfind.patch
+	fedora/openssl-1.0.1c-aliasing.patch
+	fedora/openssl-1.0.2o-conf-10.patch
+	fedora/openssl-1.0.2c-default-paths.patch
+	fedora/openssl-1.0.2a-issuer-hash.patch
+	fedora/openssl-1.0.0-beta4-ca-dir.patch
+	fedora/openssl-1.0.2a-x509.patch
+	fedora/openssl-1.0.2a-xmpp-starttls.patch
+	fedora/openssl-1.0.2h-pkgconfig.patch
+	fedora/openssl-1.0.2i-chil-fixes.patch
+	fedora/openssl-1.0.2j-downgrade-strength.patch
+	fedora/openssl-1.0.2o-cc-reqs.patch
+	fedora/openssl-1.0.2i-enc-fail.patch
+	fedora/openssl-1.0.2o-system-cipherlist.patch
+	fedora/openssl-1.0.2g-disable-sslv2v3.patch
+	fedora/openssl-1.0.2k-long-hello.patch
 	1.0.2-debuginfo.patch
 "
 
-PKG_NAMES="openssl openssl-devel openssl-perl libopenssl100"
-openssl_CATEGORY="Base Net"
-openssl_CONTENTS="--exclude=CA.pl* --exclude=tsget usr/bin/openssl.exe
-		  usr/share/doc usr/share/man/man[157] usr/ssl/"
-openssl_devel_SUMMARY="${SUMMARY} (development)"
-openssl_devel_CONTENTS="usr/include usr/lib/*.a usr/lib/pkgconfig usr/share/man/man3/"
-openssl_perl_SUMMARY="Perl scripts provided with OpenSSL"
-openssl_perl_REQUIRES="openssl"
-openssl_perl_CONTENTS="usr/bin/c_rehash usr/ssl/misc/CA.pl usr/ssl/misc/tsget
-	usr/share/man/man1/CA.pl.1.gz"
-libopenssl100_CATEGORY="Base Libs"
-libopenssl100_SUMMARY="${SUMMARY} (runtime)"
-libopenssl100_REQUIRES="ca-certificates"
-libopenssl100_CONTENTS="usr/bin/cyg*-1.0.0.dll usr/lib/${P%[a-z]}/engines/"
+PKG_NAMES="libssl1.0 libssl1.0-devel"
+libssl1_0_SUMMARY="${SUMMARY} (runtime)"
+libssl1_0_OBSOLETES="libopenssl100"
+libssl1_0_REQUIRES="ca-certificates crypto-policies"
+libssl1_0_CONTENTS="
+	etc/defaults/etc/pki/tls/openssl10.cnf
+	etc/postinstall/openssl10.sh
+	etc/preremove/openssl10.sh
+	usr/bin/cygcrypto-1.0.0.dll
+	usr/bin/cygssl-1.0.0.dll
+	usr/lib/openssl-1.0/engines/
+	usr/share/doc/${NAME}/
+"
+libssl1_0_devel_SUMMARY="${SUMMARY} (development)"
+libssl1_0_devel_CONTENTS="
+	usr/include/openssl-1.0
+	usr/lib/openssl-1.0/include
+	usr/lib/openssl-1.0/lib/*.dll.a
+	usr/lib/openssl-1.0/lib/pkgconfig/
+"
 
 DIFF_EXCLUDES="Makefile.save"
 
@@ -37,10 +62,10 @@ src_compile() {
 	lndirs
 	cd ${B}
 	unset CC
-	# MASS REBUILD (ABI break): remove no-krb5 and add:
-	#	--with-krb5-dir=/usr --with-krb5-flavor=MIT \
-	./Configure --prefix=/usr --enginesdir=/usr/lib/${P%[a-z]}/engines \
+	./Configure --prefix=/usr/lib/openssl-1.0 --openssldir=/etc/pki/tls \
+		--enginesdir=/usr/lib/openssl-1.0/engines \
 		$(cross_compiling && echo -n --cross-compile-prefix=${ARCH}-pc-cygwin-) \
+		--system-ciphers-file=/etc/crypto-policies/back-ends/openssl.config \
 		shared zlib enable-seed enable-tlsext enable-rfc3779 \
 		enable-camellia enable-cms enable-md2 enable-rc5 no-krb5 \
 		Cygwin${ARCH_x86_64+-x86_64}
@@ -50,18 +75,24 @@ src_compile() {
 
 src_install() {
 	cd ${B}
-	cygmake install INSTALL_PREFIX=${D}
+	cygmake install_sw INSTALL_PREFIX=${D}
 
-	dodir /usr/lib/${P%[a-z]}
-	mv ${D}/usr/lib/engines ${D}/usr/lib/${P%[a-z]}/
+	dodir /usr/bin
+	mv ${D}/usr/lib/openssl-1.0/bin/*.dll ${D}/usr/bin/
+	mv ${D}/usr/lib/openssl-1.0/lib/engines ${D}/usr/lib/openssl-1.0/
+	dodir /usr/include/openssl-1.0
+	dosym ../../lib/openssl-1.0/include/openssl /usr/include/openssl-1.0/openssl
 
-	dodir /usr/share
-	# move these so that we do not have to mess with MANPATH
-	mv ${D}/usr/ssl/man ${D}/usr/share/
+	# provided by openssl and openssl-perl
+	find ${D}/usr/lib/openssl-1.0/bin ! -name '*.dll' -delete
+	# remove static libraries
+	rm -f ${D}/usr/lib/openssl-1.0/lib/lib{crypto,ssl}.a
+	# provided by openssl-common
+	mv ${D}/etc/pki/tls/openssl{,10}.cnf
+	find ${D}/etc/pki/tls/ -type f ! -name openssl10.cnf -delete
 
-	dodir /usr/ssl/certs
-	cp -rp ${S}/certs/* ${D}/usr/ssl/certs/
+
+	make_etc_defaults /etc/pki/tls/openssl10.cnf
 }
 
 DOCS="CHANGES.SSLeay INSTALL"
-KEEPDIRS="/usr/ssl/private"
