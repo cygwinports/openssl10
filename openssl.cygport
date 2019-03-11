@@ -1,6 +1,6 @@
 NAME="openssl10"
-VERSION=1.0.2q
-RELEASE=1
+VERSION=1.0.2r
+RELEASE=2
 CATEGORY="Libs"
 SUMMARY="A general purpose cryptography toolkit with TLS implementation"
 DESCRIPTION="The OpenSSL toolkit provides support for secure communications between
@@ -20,6 +20,7 @@ PATCH_URI="
 	fedora/openssl-1.0.2a-issuer-hash.patch
 	fedora/openssl-1.0.0-beta4-ca-dir.patch
 	fedora/openssl-1.0.2a-x509.patch
+	fedora/openssl-1.0.2a-env-zlib.patch
 	fedora/openssl-1.0.2a-xmpp-starttls.patch
 	fedora/openssl-1.0.2h-pkgconfig.patch
 	fedora/openssl-1.0.2i-chil-fixes.patch
@@ -42,7 +43,7 @@ libssl1_0_CONTENTS="
 	etc/preremove/openssl10.sh
 	usr/bin/cygcrypto-1.0.0.dll
 	usr/bin/cygssl-1.0.0.dll
-	usr/lib/openssl-1.0/engines/
+	usr/lib/engines-1.0/
 	usr/share/doc/${NAME}/
 "
 libssl1_0_devel_SUMMARY="${SUMMARY} (development)"
@@ -63,7 +64,7 @@ src_compile() {
 	cd ${B}
 	unset CC
 	./Configure --prefix=/usr/lib/openssl-1.0 --openssldir=/etc/pki/tls \
-		--enginesdir=/usr/lib/openssl-1.0/engines \
+		--enginesdir=/usr/lib/engines-1.0 \
 		$(cross_compiling && echo -n --cross-compile-prefix=${ARCH}-pc-cygwin-) \
 		--system-ciphers-file=/etc/crypto-policies/back-ends/openssl.config \
 		shared zlib enable-seed enable-tlsext enable-rfc3779 \
@@ -79,7 +80,7 @@ src_install() {
 
 	dodir /usr/bin
 	mv ${D}/usr/lib/openssl-1.0/bin/*.dll ${D}/usr/bin/
-	mv ${D}/usr/lib/openssl-1.0/lib/engines ${D}/usr/lib/openssl-1.0/
+	mv ${D}/usr/lib/openssl-1.0/lib/engines ${D}/usr/lib/engines-1.0
 	dodir /usr/include/openssl-1.0
 	dosym ../../lib/openssl-1.0/include/openssl /usr/include/openssl-1.0/openssl
 
