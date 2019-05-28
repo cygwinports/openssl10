@@ -1,3 +1,3 @@
 [submodule "fedora"]
 	path = fedora
-	url = https://src.fedoraproject.org/cgit/rpms/compat-openssl10.git
+	url = https://src.fedoraproject.org/rpms/compat-openssl10.git
